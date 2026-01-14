@@ -1,5 +1,7 @@
 <script setup></script>
 
 <template>
-    Home
+    <nav>
+        <router-link to="/classic">Classic</router-link>
+    </nav>
 </template>
