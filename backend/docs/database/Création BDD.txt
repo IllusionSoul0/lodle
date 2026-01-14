@@ -1,0 +1,41 @@
+CREATE TABLE Champions(
+   id SERIAL,
+   name VARCHAR(50) UNIQUE,
+   gender VARCHAR(50),
+   role text[],
+   species text[],
+   resource VARCHAR(50),
+   range_type text[],
+   region text[],
+   release_year INT,
+   PRIMARY KEY(id)
+);
+
+CREATE TABLE Users(
+   id SERIAL,
+   pseudo VARCHAR(50),
+   email VARCHAR(75),
+   password VARCHAR(50),
+   PRIMARY KEY(id)
+);
+
+CREATE TABLE Stats(
+   id SERIAL,
+   gamemode VARCHAR(50),
+   date_ DATE,
+   nb_try INT,
+   successful BOOL,
+   id_user INT NOT NULL,
+   id_champion INT NOT NULL,
+   PRIMARY KEY(id),
+   FOREIGN KEY(id_user) REFERENCES Users(id),
+   FOREIGN KEY(id_champion) REFERENCES Champions(id)
+);
+
+CREATE TABLE Quotes(
+   id SERIAL,
+   name_champion VARCHAR(50),
+   quote VARCHAR(250),
+   PRIMARY KEY(id),
+   FOREIGN KEY(name_champion) REFERENCES Champions(name)
+);
