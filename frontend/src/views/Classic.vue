@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { API_URL } from "@/components/api";
+import { API_URL } from "@/api";
 
 const champions = ref([]);
 const error = ref(null);

@@ -9,7 +9,7 @@ use App\Repository\ChampionsRepository;
 
 final class ChampionsController extends AbstractController
 {
-    #[Route('/champions', name: 'app_champions')]
+    #[Route('/api/champions', name: 'app_champions')]
     public function index(ChampionsRepository $championRepository): JsonResponse
     {
         $champions = $championRepository->findAll();
