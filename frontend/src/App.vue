@@ -23,6 +23,10 @@ onMounted(() => {
   <main>
     <router-view />
   </main>
+
+  <footer>
+    Maxime CHAINTREAU, Nikola TODOROVIC, Thibaut MINARD - 2026
+  </footer>
 </template>
 
 <style>
@@ -46,5 +50,43 @@ main {
 
 #game {
   background-color: lightgray;
+}
+
+footer {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 14px;
+  color: #FFF;
+}
+
+.suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.suggestions li {
+  padding: 2px 10px;
+  cursor: pointer;
+}
+
+.suggestions li:hover {
+  background: #eee;
+}
+
+.suggestions img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+td {
+  border: 2px solid black;
+  width: 25px;
+  padding: 0;
 }
 </style>

@@ -22,9 +22,10 @@ CREATE TABLE Users(
 CREATE TABLE Stats(
    id SERIAL,
    gamemode VARCHAR(50),
-   date_ DATE,
+   date DATE,
    nb_try INT,
    successful BOOL,
+   attempts JSONB,
    id_user INT NOT NULL,
    id_champion INT NOT NULL,
    PRIMARY KEY(id),

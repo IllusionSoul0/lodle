@@ -13,7 +13,6 @@ const error = ref("");
 const loading = ref(false);
 
 const handleLogin = async () => {
-  console.log("jsp");
   error.value = "";
   loading.value = true;
 
