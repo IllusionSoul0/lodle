@@ -100,6 +100,9 @@ const handleSubmit = async () => {
 <template>
   <div class="login-container">
     <form @submit.prevent="handleSubmit">
+      <div class="icon-circle">
+        <img src="../assets/icons/logo-login.png" alt="User Icon" class="user-icon" />
+      </div>
       <h1>{{ isRegistering ? "Créer un compte" : "Connexion" }}</h1>
 
       <div v-if="error" class="error-message">
@@ -128,7 +131,7 @@ const handleSubmit = async () => {
 
     <div class="toggle-form">
       <p>{{ isRegistering ? "Vous avez déjà un compte?" : "Vous n'avez pas de compte?" }}</p>
-      <button type="button" @click="toggleForm" class="link-button">
+      <button type="button" @click="toggleForm" class="link-inscription-btn">
         {{ isRegistering ? "Connexion" : "Inscription" }}
       </button>
     </div>
@@ -137,11 +140,14 @@ const handleSubmit = async () => {
 
 <style scoped>
 .login-container {
+  background-color: rgba(0, 0, 0, 0.75);
   max-width: 400px;
   margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  padding: 40px;
+  border-radius: 15px;
+  color: #f0e6d2;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
 }
 
 form {
@@ -149,9 +155,28 @@ form {
   flex-direction: column;
 }
 
+.icon-circle {
+  width: auto;
+  height: auto;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 15px;
+}
+
+.user-icon {
+  width: 4rem;
+  height: auto;
+}
+
 h1 {
   text-align: center;
   margin-bottom: 20px;
+  color: #c89b3c;
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 .form-group {
@@ -163,84 +188,112 @@ h1 {
 label {
   margin-bottom: 5px;
   font-weight: bold;
+  color: #a09b8c;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
 }
 
 input {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 12px;
+  background-color: #1e2328;
+  border: 2px solid #5b5a56;
+  border-radius: 5px;
   font-size: 14px;
+  color: #f0e6d2;
+  transition: border-color 0.3s ease;
 }
 
-button {
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
+input:focus {
+  outline: none;
+  border-color: #c89b3c;
+}
+
+button[type="submit"] {
+  padding: 12px;
+  background-color: #c89b3c;
+  color: #1e2328;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(200, 155, 60, 0.2);
 }
 
-button:hover:not(:disabled) {
-  background-color: #0056b3;
+button[type="submit"]:hover:not(:disabled) {
+  background-color: #a07b30;
+  box-shadow: 0 0 20px rgba(200, 155, 60, 0.5);
 }
 
-button:disabled {
+button[type="submit"]:disabled {
   background-color: #6c757d;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .error-message {
-  color: #d32f2f;
+  color: #ffcccc;
   margin-bottom: 15px;
   padding: 10px;
-  background-color: #ffebee;
+  background-color: rgba(220, 53, 69, 0.2);
   border-radius: 4px;
+  border: 1px solid #dc3545;
 }
 
 .toggle-form {
   text-align: center;
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid #ddd;
+  border-top: 2px solid #5b5a56;
 }
 
 .toggle-form p {
   margin: 0 0 10px 0;
-  color: #666;
+  color: #a09b8c;
 }
 
-.link-button {
+.link-inscription-btn {
   background-color: transparent;
-  color: #007bff;
-  padding: 5px 0;
-  border: none;
-
-  .connected-view {
-    text-align: center;
-  }
-
-  .logout-button {
-    padding: 10px 20px;
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-top: 20px;
-  }
-
-  .logout-button:hover {
-    background-color: #c82333;
-  }
+  color: #c89b3c;
+  padding: 5px 10px;
+  border: 2px solid #c89b3c;
+  border-radius: 4px;
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: none;
   font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
-.link-button:hover {
-  color: #0056b3;
+.link-inscription-btn:hover {
+  background-color: #c89b3c;
+  color: #1e2328;
+}
+
+.connected-view {
+  text-align: center;
+}
+
+.logout-button {
+  padding: 12px 20px;
+  background-color: transparent;
+  color: #c89b3c;
+  border: 2px solid #c89b3c;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(200, 155, 60, 0.2);
+}
+
+.logout-button:hover {
+  background-color: #c89b3c;
+  color: #1e2328;
+  box-shadow: 0 0 20px rgba(200, 155, 60, 0.5);
 }
 </style>

@@ -12,16 +12,19 @@ export function useGameMode(gamemode) {
   const splash = ref("");
   const guess = ref("");
   const userId = ref(localStorage.getItem("userId"));
+  let splashIndex = [];
 
-  const splashImages = import.meta.glob("/public/champion/splash/*", { eager: true, as: "url" });
+  if (gamemode === "splash") {
+    const splashImages = import.meta.glob("/public/champion/splash/*", { eager: true, as: "url" });
 
-  const splashIndex = Object.entries(splashImages).map(([path, url]) => ({
-    name: path
-      .split("/")
-      .pop()
-      .replace(/\.\w+$/, ""),
-    url,
-  }));
+    splashIndex = Object.entries(splashImages).map(([path, url]) => ({
+      name: path
+        .split("/")
+        .pop()
+        .replace(/\.\w+$/, ""),
+      url,
+    }));
+  }
 
   const suggestions = computed(() => {
     if (!guess.value) return [];

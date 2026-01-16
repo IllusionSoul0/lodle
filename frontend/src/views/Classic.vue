@@ -36,12 +36,17 @@ onMounted(async () => {
 </script>
 
 <template>
+  <nav>
+    <router-link to="/classic"><img src="/src/assets/icons/classic.png" alt="classic" width="50px" class="icone" /></router-link>
+    <router-link to="/quote"><img src="/src/assets/icons/quotes.png" alt="quote" width="50px" class="icone" /></router-link>
+    <router-link to="/splash"><img src="/src/assets/icons/splash.png" alt="classic" width="50px" class="icone" /></router-link>
+  </nav>
   <div id="game" class="game-container">
     <div v-if="loading" class="status-message">Chargement des champions...</div>
     <div v-else-if="error" class="status-message error">Erreur: {{ error.message }}</div>
 
     <div v-else class="content-wrapper">
-      <h1 class="game-title">Mode classique</h1>
+      <h1 class="game-title">Mode Classique</h1>
 
       <div v-if="!found" class="search-section">
         <div class="search-box">
@@ -59,11 +64,20 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div v-else class="victory-message">
-        <h2>Félicitations !</h2>
-        <p>
-          Vous avez trouvé <strong>{{ answer.name }}</strong> en {{ attempts.length }} essais.
-        </p>
+      <div v-if="!found">
+        <div class="button-container">
+          <button @click="resetGame" class="btn-reset">Recommencer</button>
+        </div>
+      </div>
+
+      <div v-else class="victory-section">
+        <div class="victory-message">
+          <h2>Félicitations !</h2>
+          <p>
+            Vous avez trouvé <strong>{{ answer.name }}</strong> en {{ attempts.length }} essais.
+          </p>
+        </div>
+        <button @click="resetGame" class="btn-reset">Rejouer</button>
       </div>
 
       <div class="table-responsive">
@@ -115,8 +129,6 @@ onMounted(async () => {
           </transition-group>
         </table>
       </div>
-
-      <button @click="resetGame">Reset</button>
     </div>
   </div>
 </template>
@@ -128,7 +140,7 @@ onMounted(async () => {
   padding: 20px;
   background-color: rgba(0, 0, 0, 0.75);
   border-radius: 15px;
-  color: white;
+  color: #f0e6d2;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
 }
@@ -172,7 +184,6 @@ onMounted(async () => {
   padding: 0 20px;
   cursor: pointer;
   border-radius: 0 5px 5px 0;
-  transition: background 0.3s;
 }
 
 .btn-send:hover {
@@ -292,6 +303,22 @@ th {
   margin-bottom: 30px;
 }
 
+.victory-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.victory-section h2 {
+  color: #28a745;
+  margin-bottom: 10px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
 .hint {
   text-align: center;
   font-style: italic;
@@ -305,6 +332,25 @@ th {
 .list-enter-from {
   opacity: 0;
   transform: translateY(-30px);
+}
+
+.btn-reset {
+  margin: 1vw;
+  background-color: transparent;
+  color: #c89b3c;
+  border: 2px solid #c89b3c;
+  padding: 12px 35px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(200, 155, 60, 0.2);
+}
+
+.btn-reset:hover {
+  background-color: #c89b3c;
+  color: #1e2328;
+  box-shadow: 0 0 20px rgba(200, 155, 60, 0.5);
 }
 
 @media (max-width: 600px) {

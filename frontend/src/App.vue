@@ -19,7 +19,7 @@ onMounted(() => {
       <router-link to="/login" id="link" @click="disconnect"
         ><img src="/src/assets/icons/logo-login.png" alt="login" width="50px" class="icone" />{{ isConnected ? "Déconnexion" : "Connexion" }}
       </router-link>
-      <router-link to="/"><img src="/src/assets/logo/logo_loldle.png" alt="logo" width="500px" /></router-link>
+      <router-link to="/"><img src="/src/assets/logo/logo_loldle.png" alt="logo" id="logo" /></router-link>
       <router-link to="/stats" id="link"><img src="/src/assets/icons/statistique.png" alt="stats" width="50px" class="icone" />Stats</router-link>
     </nav>
   </header>
@@ -40,75 +40,48 @@ main {
   align-items: center;
 }
 
+main {
+  flex-direction: column;
+}
+
+html {
+  scrollbar-width: none;
+}
+
 #link {
   margin: 0 15px;
   text-decoration: none;
-  color: #333;
-  background-color: antiquewhite;
+  color: #c89b3c;
+  background-color: rgba(0, 0, 0, 0.35);
   padding: 10px 20px;
   border-radius: 5px;
+  width: 10vw;
+  border: 2px solid #c89b3c;
   font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
 }
 
-#game {
-  background-color: lightgray;
+#logo {
+  width: 40vw;
+}
+
+.game-container {
+  width: 60vw;
+}
+
+#link:hover {
+  background-color: #c89b3c;
+  color: #1e2328;
 }
 
 footer {
   text-align: center;
   margin: 20px 0;
   font-size: 14px;
-  color: #fff;
-}
-
-.suggestions {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border: 1px solid #ccc;
-  max-height: 150px;
-  overflow-y: auto;
-}
-
-.suggestions li {
-  padding: 2px 10px;
-  cursor: pointer;
-}
-
-.suggestions li:hover {
-  background: #eee;
-}
-
-.suggestions img {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
-  vertical-align: middle;
-}
-
-td {
-  border: 2px solid black;
-  width: 25px;
-  padding: 0;
-}
-
-#link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 15px;
-  text-decoration: none;
-  color: #ffffff;
-  /* background-color: antiquewhite; */
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-weight: bold;
-}
-
-#game {
-  background-color: lightgray;
-  padding: 20px;
-  border-radius: 5px;
+  color: #a09b8c;
 }
 
 .icone {
@@ -118,7 +91,96 @@ td {
   height: auto;
   cursor: pointer;
 }
+
 .icone:hover {
   transform: scale(1.1);
+}
+
+@media (max-width: 1024px) {
+  #logo {
+    width: 50vw;
+  }
+
+  .game-container {
+    width: 80vw;
+  }
+
+  #link {
+    width: auto;
+    margin: 0 10px;
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  nav {
+    flex-wrap: wrap;
+  }
+
+  #logo {
+    width: 70vw;
+    order: -1;
+  }
+
+  #link {
+    width: auto;
+    margin: 5px;
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .icone {
+    width: 40px;
+    margin: 5px;
+  }
+
+  .game-container {
+    width: 90vw;
+  }
+
+  footer {
+    font-size: 12px;
+    margin: 15px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 10px;
+  }
+
+  nav {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  #logo {
+    width: 80vw;
+    margin-bottom: 10px;
+  }
+
+  #link {
+    width: 100%;
+    margin: 3px 0;
+    padding: 8px;
+    font-size: 10px;
+  }
+
+  .icone {
+    width: 30px;
+    margin: 3px;
+  }
+
+  .game-container {
+    width: 95vw;
+    margin: 10px auto;
+    padding: 10px;
+  }
+
+  footer {
+    font-size: 10px;
+    margin: 10px 0;
+  }
 }
 </style>
