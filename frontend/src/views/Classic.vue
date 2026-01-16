@@ -1,24 +1,11 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { API_URL } from "@/components/api";
+import { imgSrc } from "@/utils/imgSrc.js";
+import { useGameMode } from "@/components/useGameMode";
 
-const champions = ref([]);
-const error = ref(null);
-const loading = ref(true);
-const answer = ref({});
-const attempts = ref([]);
-const champions_list = ref([]);
-const guess = ref("");
-const found = ref(false);
+const { loading, error, champions, champions_list, attempts, answer, found, guess, suggestions, attempt, resetGame, init } = useGameMode("classic");
 
-const imgSrc = (champion) => {
-  const champion_name = champion
-    .toLowerCase()
-    .replace(/(?:^|[\s'])(\w)/g, (_, c) => c.toUpperCase())
-    .replace(/[\s']/g, "");
-  return `/champion/tiles/${champion_name}.png`;
-};
-
+// Normalize values for display
 const normalize = (value) => {
   if (Array.isArray(value)) {
     return value.map((v) => v.toString().replace(/[{}"]/g, "").trim());
@@ -26,6 +13,7 @@ const normalize = (value) => {
   return value.toString().trim();
 };
 
+// Manage the color of the display based on guess and answer
 const display = (guessValue, answerValue) => {
   const guessArr = Array.isArray(guessValue) ? normalize(guessValue) : [normalize(guessValue)];
   const answerArr = Array.isArray(answerValue) ? normalize(answerValue) : [normalize(answerValue)];
@@ -41,43 +29,9 @@ const display = (guessValue, answerValue) => {
   return { text: guessArr.join(", "), bg: "red" };
 };
 
-const suggestions = computed(() => {
-  if (!guess.value) return [];
-
-  return champions_list.value.filter((name) => name.toLowerCase().startsWith(guess.value.toLowerCase()));
-});
-
-const attempt = () => {
-  if (!suggestions.value.length) return;
-
-  const exactMatch = suggestions.value.find((name) => name.toLowerCase() === guess.value.toLowerCase());
-
-  const selected = exactMatch ?? suggestions.value[0];
-
-  attempts.value.push(champions.value.find((c) => c.name.toLowerCase() === selected.toLowerCase()));
-
-  if (selected.toLowerCase() === answer.value.name.toLowerCase()) {
-    found.value = true;
-  }
-  champions_list.value = champions_list.value.filter((name) => name.toLowerCase() !== selected.toLowerCase());
-  guess.value = "";
-};
-
+// Fetch champions and initialize game state
 onMounted(async () => {
-  try {
-    const res = await fetch(`${API_URL}/champions`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-    champions.value = json.data;
-    champions_list.value = champions.value.map((c) => c.name);
-    const answerIndex = Math.floor(Math.random() * champions.value.length);
-    answer.value = champions.value[answerIndex];
-  } catch (e) {
-    error.value = e;
-    console.error(e);
-  } finally {
-    loading.value = false;
-  }
+  init();
 });
 </script>
 
@@ -110,6 +64,8 @@ onMounted(async () => {
         <p>Vous avez trouvé <strong>{{ answer.name }}</strong> en {{ attempts.length }} essais.</p>
       </div>
 
+      <button @click="resetGame" class="btn-reset">Deviner un autre champion</button>
+
       <div class="table-responsive">
         <table class="classic-table">
           <thead>
@@ -119,9 +75,9 @@ onMounted(async () => {
               <th>Rôle</th>
               <th>Espèce</th>
               <th>Ressource</th>
-              <th>Portée</th>
+              <th>Type de Portée</th>
               <th>Région</th>
-              <th>Sortie</th>
+              <th>Année de Sortie</th>
             </tr>
           </thead>
           <transition-group name="list" tag="tbody">
@@ -158,8 +114,6 @@ onMounted(async () => {
           </transition-group>
         </table>
       </div>
-      
-      <p v-if="!found" class="hint">Indice : {{ answer.name }}</p>
     </div>
   </div>
 </template>
@@ -215,7 +169,6 @@ onMounted(async () => {
   padding: 0 20px;
   cursor: pointer;
   border-radius: 0 5px 5px 0;
-  transition: background 0.3s;
 }
 
 .btn-send:hover {
@@ -340,6 +293,25 @@ th {
 .list-enter-from {
   opacity: 0;
   transform: translateY(-30px);
+}
+
+.btn-reset {
+  margin: 1vw;
+  background-color: transparent;
+  color: #c89b3c;
+  border: 2px solid #c89b3c;
+  padding: 12px 35px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(200, 155, 60, 0.2);
+}
+
+.btn-reset:hover {
+  background-color: #c89b3c;
+  color: #1e2328;
+  box-shadow: 0 0 20px rgba(200, 155, 60, 0.5);
 }
 
 

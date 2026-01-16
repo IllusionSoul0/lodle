@@ -1,57 +1,162 @@
 <script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { login } from "@/stores/auth.js";
+import { API_URL } from "../api.js";
 
+const router = useRouter();
+const isRegistering = ref(false);
+const email = ref("");
+const password = ref("");
+const pseudo = ref("");
+const error = ref("");
+const loading = ref(false);
+
+const handleLogin = async () => {
+  error.value = "";
+  loading.value = true;
+
+  try {
+    const response = await fetch(`${API_URL}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      error.value = data.error || "Échec de la connexion";
+      return;
+    }
+    localStorage.setItem("userId", data.userId);
+    login(data.userId);
+    router.push("/");
+  } catch (err) {
+    error.value = "Une erreur s'est produite lors de la connexion";
+    console.error(err);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleRegister = async () => {
+  error.value = "";
+  loading.value = true;
+
+  try {
+    const response = await fetch(`${API_URL}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+        pseudo: pseudo.value,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      error.value = data.error || "Échec de l'inscription";
+      return;
+    }
+
+    localStorage.setItem("userId", data.userId);
+    login(data.userId);
+    router.push("/");
+  } catch (err) {
+    error.value = "Une erreur s'est produite lors de l'inscription";
+    console.error(err);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const toggleForm = () => {
+  isRegistering.value = !isRegistering.value;
+  error.value = "";
+  email.value = "";
+  password.value = "";
+  pseudo.value = "";
+};
+
+const handleSubmit = async () => {
+  if (isRegistering.value) {
+    await handleRegister();
+  } else {
+    await handleLogin();
+  }
+};
 </script>
 
 <template>
-  <div class="login-page">
-    <div class="login-card">
-      <div class="login-header">
-        <div class="icon-circle">
+  <div class="login-container">
+    <form @submit.prevent="handleSubmit">
+      <div class="icon-circle">
           <img src="../assets/icones/logo-login.png" alt="User Icon" class="user-icon">
-        </div>
-        <h1>LOGIN</h1>
+      </div>
+      <h1>{{ isRegistering ? "Créer un compte" : "Connexion" }}</h1>
+
+      <div v-if="error" class="error-message">
+        {{ error }}
       </div>
 
-      <form action="" method="post" @submit.prevent class="login-form">
-        <div class="input-group">
-          <input type="text" placeholder="Username" required />
-        </div>
+      <div v-if="isRegistering" class="form-group">
+        <label for="pseudo">Nom d'utilisateur:</label>
+        <input id="pseudo" v-model="pseudo" type="text" placeholder="Entrez votre nom d'utilisateur" required />
+      </div>
 
-        <div class="input-group">
-          <input type="password" placeholder="Password" required />
-        </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input id="email" v-model="email" type="email" placeholder="Entrez votre email" required />
+      </div>
 
-        <button type="submit" class="btn-submit">LOGIN</button>
-      </form>
+      <div class="form-group">
+        <label for="password">Mot de passe:</label>
+        <input id="password" v-model="password" type="password" placeholder="Entrez votre mot de passe" required />
+      </div>
 
+      <button type="submit" :disabled="loading">
+        {{ loading ? (isRegistering ? "Création..." : "Connexion en cours...") : isRegistering ? "Créer un compte" : "Connexion" }}
+      </button>
+    </form>
+
+    <div class="toggle-form">
+      <p>{{ isRegistering ? "Vous avez déjà un compte?" : "Vous n'avez pas de compte?" }}</p>
+      <button type="button" @click="toggleForm" class="link-inscription-btn">
+        {{ isRegistering ? "Connexion" : "Inscription" }}
+      </button>
     </div>
   </div>
 </template>
 
-<style>
-.login-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 3%;
+<style scoped>
+.login-container {
+  background-color: rgb(231, 231, 231);
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
 
-.login-card {
-  background-color: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 380px;
-  text-align: center;
+form {
+  display: flex;
+  flex-direction: column;
 }
 
 .icon-circle {
-  width: 90px;
-  height: 90px;
-  border: 2px solid #ced4da;
+  width: auto;
+  height: auto;
   border-radius: 50%;
-  background-color: #c8c6c6;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -59,63 +164,108 @@
 }
 
 .user-icon {
-  width: 55%;
+  width: 4rem;
   height: auto;
 }
 
 h1 {
-  color: #495057;
-  letter-spacing: 4px;
-  font-weight: 400;
-  margin-bottom: 30px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-.login-form {
+.form-group {
+  margin-bottom: 15px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
 }
 
-.input-group {
-  display: flex;
-  align-items: center;
-  border: 1.5px solid #ced4da;
-  border-radius: 6px;
-  padding: 10px 12px;
+label {
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
 input {
-  border: none;
-  outline: none;
-  width: 100%;
-  font-size: 1rem;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.btn-submit {
-  background-color: #4fc3f7; 
+button {
+  padding: 10px;
+  background-color: #007bff;
   color: white;
   border: none;
-  padding: 14px;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 1rem;
+  border-radius: 4px;
   cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.3s;
+  font-size: 14px;
 }
 
-.btn-submit:hover {
-  background-color: #29b6f6;
+button:hover:not(:disabled) {
+  background-color: #0056b3;
 }
 
-.login-footer {
-  margin-top: 25px;
-  font-size: 0.85rem;
-  color: #6c757d;
+button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
 }
 
-.login-footer a {
-  color: #6c757d;
+.error-message {
+  color: #d32f2f;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+.toggle-form {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.toggle-form p {
+  margin: 0 0 10px 0;
+  color: #666;
+}
+
+.link-button {
+  background-color: transparent;
+  color: #208cff;
+  padding: 5px 0;
+  border: none;
+
+  .connected-view {
+    text-align: center;
+  }
+
+.link-inscription-btn{
+    color: #208cff;
+    padding: 5px 0;
+    border: none;
+}
+
+  .logout-button {
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 20px;
+  }
+
+  .logout-button:hover {
+    background-color: #c82333;
+  }
+  cursor: pointer;
   text-decoration: underline;
+  font-size: 14px;
+}
+
+.link-button:hover {
+  color: #00448c;
 }
 </style>

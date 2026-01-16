@@ -1,0 +1,4 @@
+--Création de l'utilisateur pour la base de données
+CREATE USER app WITH PASSWORD 'dev';
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA Public TO app;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA Public TO app;

@@ -1,0 +1,16 @@
+In frontend :
+
+- Run `npm install` to install dependencies
+- Run `npm run dev` to start the development server
+
+In backend :
+(assuming you have PHP and Composer installed and up to date)
+
+- Run composer install to install dependencies
+- Run `php -S localhost:8000 -t public` to start the development server
+
+Create a db loldle then:
+
+- Run the SQL commands in the file `backend/docs/database/Création BDD.txt` to create the necessary tables
+- Run the SQL commands in the file `backend/docs/database/Quotes Data.txt` and `backend/docs/database/Champions Data.txt` to populate the tables with initial data
+- Create the necessary user for database access with appropriate permissions using the SQL commands in `backend/docs/database/Création utilisateur.txt`
