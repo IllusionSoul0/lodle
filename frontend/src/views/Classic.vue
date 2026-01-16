@@ -45,11 +45,11 @@ onMounted(async () => {
 
       <div v-if="!found" class="search-section">
         <div class="search-box">
-          <input v-model="guess" type="text" placeholder="Tapez le nom d'un champion..." @keydown.enter="attempt" class="styled-input"/>
+          <input v-model="guess" type="text" placeholder="Tapez le nom d'un champion..." @keydown.enter="attempt" class="styled-input" />
           <button @click="attempt" class="btn-send">
             <span class="arrow">➤</span>
           </button>
-  
+
           <ul v-if="suggestions.length" class="suggestions-list">
             <li v-for="name in suggestions" :key="name" @click="guess = name" class="suggestion-item">
               <img :src="imgSrc(name)" alt="" class="mini-tile" />
@@ -61,7 +61,9 @@ onMounted(async () => {
 
       <div v-else class="victory-message">
         <h2>Félicitations !</h2>
-        <p>Vous avez trouvé <strong>{{ answer.name }}</strong> en {{ attempts.length }} essais.</p>
+        <p>
+          Vous avez trouvé <strong>{{ answer.name }}</strong> en {{ attempts.length }} essais.
+        </p>
       </div>
 
       <div class="table-responsive">
@@ -106,14 +108,15 @@ onMounted(async () => {
               <td :class="['cell', display(champion.release_year, answer.release_year).bg]">
                 <div class="cell-content">
                   {{ display(champion.release_year, answer.release_year).text }}
+                  <span>{{ champion.release_year > answer.release_year ? "⬇️" : champion.release_year < answer.release_year ? "⬆️" : "" }}</span>
                 </div>
               </td>
             </tr>
           </transition-group>
         </table>
       </div>
-      
-      <p v-if="!found" class="hint">Indice : {{ answer.name }}</p>
+
+      <button @click="resetGame">Reset</button>
     </div>
   </div>
 </template>
@@ -136,7 +139,7 @@ onMounted(async () => {
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 30px;
-  color: #c89b3c; 
+  color: #c89b3c;
 }
 
 .search-section {
@@ -267,10 +270,18 @@ th {
   display: block;
 }
 
-
-.green { background-color: #28a745; border-color: #1e7e34; }
-.orange { background-color: #ff8c00; border-color: #d47500; }
-.red { background-color: #dc3545; border-color: #bd2130; }
+.green {
+  background-color: #28a745;
+  border-color: #1e7e34;
+}
+.orange {
+  background-color: #ff8c00;
+  border-color: #d47500;
+}
+.red {
+  background-color: #dc3545;
+  border-color: #bd2130;
+}
 
 .victory-message {
   text-align: center;
@@ -296,10 +307,15 @@ th {
   transform: translateY(-30px);
 }
 
-
 @media (max-width: 600px) {
-  .game-title { font-size: 1.8rem; }
-  .cell { width: 70px; height: 70px; font-size: 0.8rem; }
+  .game-title {
+    font-size: 1.8rem;
+  }
+  .cell {
+    width: 70px;
+    height: 70px;
+    font-size: 0.8rem;
+  }
   .table-responsive {
     mask-image: linear-gradient(to right, black 85%, transparent 100%);
   }

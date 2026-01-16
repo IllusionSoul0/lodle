@@ -7,6 +7,7 @@ const stats = ref([]);
 const loading = ref(true);
 const error = ref(null);
 const champions = ref([]);
+const selectedGamemode = ref(null);
 
 // Get the image path locally based on champion name
 const imgSrc = (champion) => {
@@ -28,6 +29,17 @@ const statsByGamemode = computed(() => {
   });
 
   return grouped;
+});
+
+const availableGamemodes = computed(() => {
+  return Object.keys(statsByGamemode.value).sort();
+});
+
+const currentGamemode = computed(() => {
+  if (!selectedGamemode.value && availableGamemodes.value.length > 0) {
+    return availableGamemodes.value[0];
+  }
+  return selectedGamemode.value;
 });
 
 const getGamemodeStats = (gamemode) => {
@@ -121,40 +133,51 @@ onMounted(async () => {
       </div>
 
       <div v-else>
-        <div v-for="(gamemode, index) in Object.keys(statsByGamemode)" :key="gamemode" class="gamemode-section">
-          <h2>{{ gamemode.charAt(0).toUpperCase() + gamemode.slice(1) }}</h2>
+        <div class="gamemode-selector">
+          <button
+            v-for="gamemode in availableGamemodes"
+            :key="gamemode"
+            :class="['gamemode-button', { active: currentGamemode === gamemode }]"
+            @click="selectedGamemode = gamemode"
+          >
+            {{ gamemode.charAt(0).toUpperCase() + gamemode.slice(1) }}
+          </button>
+        </div>
+
+        <div v-if="currentGamemode" class="gamemode-section">
+          <h2>{{ currentGamemode.charAt(0).toUpperCase() + currentGamemode.slice(1) }}</h2>
 
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-label">Parties jouées</div>
-              <div class="stat-value">{{ getGamemodeStats(gamemode).total }}</div>
+              <div class="stat-value">{{ getGamemodeStats(currentGamemode).total }}</div>
             </div>
 
             <div class="stat-card">
               <div class="stat-label">Réussites</div>
-              <div class="stat-value green">{{ getGamemodeStats(gamemode).successful }}</div>
+              <div class="stat-value green-text">{{ getGamemodeStats(currentGamemode).successful }}</div>
             </div>
 
             <div class="stat-card">
               <div class="stat-label">Échecs</div>
-              <div class="stat-value red">{{ getGamemodeStats(gamemode).failed }}</div>
+              <div class="stat-value red-text">{{ getGamemodeStats(currentGamemode).failed }}</div>
             </div>
 
             <div class="stat-card">
               <div class="stat-label">Taux de réussite</div>
-              <div class="stat-value">{{ getGamemodeStats(gamemode).successRate }}%</div>
+              <div class="stat-value">{{ getGamemodeStats(currentGamemode).successRate }}%</div>
             </div>
 
             <div class="stat-card">
               <div class="stat-label">Nombre d'essais moyen</div>
-              <div class="stat-value">{{ getGamemodeStats(gamemode).averageTries }}</div>
+              <div class="stat-value">{{ getGamemodeStats(currentGamemode).averageTries }}</div>
             </div>
           </div>
 
           <div class="champions-section">
             <h3>Champions les plus devinés</h3>
             <div class="champions-list">
-              <div v-for="(championStat, championId) in getGamemodeStats(gamemode).champions" :key="championId" class="champion-item">
+              <div v-for="(championStat, championId) in getGamemodeStats(currentGamemode).champions" :key="championId" class="champion-item">
                 <div class="left-part">
                   <div class="champion-header">
                     <img :src="imgSrc(getChampionName(championId))" alt="" class="champion-image" />
@@ -177,24 +200,61 @@ onMounted(async () => {
   max-width: 1000px;
   margin: 20px auto;
   padding: 20px;
+  background-color: rgba(0, 0, 0, 0.75);
+  border-radius: 15px;
+  color: #f0e6d2;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
 }
 
 h1 {
   text-align: center;
   margin-bottom: 30px;
-  color: #333;
+  color: #c89b3c;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.gamemode-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.gamemode-button {
+  padding: 10px 20px;
+  border: 2px solid #c89b3c;
+  background-color: #1e2328;
+  color: #c89b3c;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.gamemode-button:hover {
+  background-color: #32383e;
+}
+
+.gamemode-button.active {
+  background-color: #c89b3c;
+  color: #1e2328;
 }
 
 h2 {
   margin-top: 30px;
   margin-bottom: 15px;
-  color: #555;
-  border-bottom: 2px solid #007bff;
+  color: #c89b3c;
+  border-bottom: 2px solid #5b5a56;
   padding-bottom: 10px;
 }
 
 h3 {
-  color: #666;
+  color: #c89b3c;
   margin-top: 20px;
   margin-bottom: 15px;
 }
@@ -208,14 +268,15 @@ h3 {
 }
 
 .error {
-  color: #d32f2f;
-  background-color: #ffebee;
+  color: #ffcccc;
+  background-color: rgba(220, 53, 69, 0.2);
   border-radius: 4px;
+  border: 1px solid #dc3545;
 }
 
 .no-stats {
-  color: #666;
-  background-color: #f5f5f5;
+  color: #a09b8c;
+  background-color: rgba(91, 90, 86, 0.2);
   border-radius: 4px;
 }
 
@@ -227,17 +288,17 @@ h3 {
 }
 
 .stat-card {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
+  background-color: #1e2328;
+  border: 2px solid #5b5a56;
   border-radius: 8px;
   padding: 20px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .stat-label {
   font-size: 12px;
-  color: #999;
+  color: #a09b8c;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 10px;
@@ -246,22 +307,23 @@ h3 {
 .stat-value {
   font-size: 28px;
   font-weight: bold;
-  color: #007bff;
+  color: #c89b3c;
 }
 
-.stat-value.green {
-  color: #4caf50;
+.stat-value.green-text {
+  color: #28a745;
 }
 
-.stat-value.red {
-  color: #d32f2f;
+.stat-value.red-text {
+  color: #dc3545;
 }
 
 .champions-section {
-  background-color: #f5f5f5;
+  background-color: rgba(91, 90, 86, 0.15);
   border-radius: 8px;
   padding: 20px;
   margin-top: 20px;
+  border: 1px solid #5b5a56;
 }
 
 .champions-list {
@@ -274,10 +336,12 @@ h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: white;
+  background-color: #1e2328;
   padding: 12px;
   border-radius: 4px;
-  border-left: 4px solid #007bff;
+  border-left: 4px solid #c89b3c;
+  border: 2px solid #5b5a56;
+  border-left: 4px solid #c89b3c;
 }
 
 .left-part {
@@ -296,25 +360,27 @@ h3 {
   width: 40px;
   height: 40px;
   border-radius: 4px;
+  border: 1px solid #c89b3c;
 }
 
 .champion-name {
   font-weight: bold;
-  color: #333;
+  color: #f0e6d2;
 }
 
 .champion-usage {
   font-size: 12px;
-  color: #999;
+  color: #a09b8c;
 }
 
 .champion-success {
-  background-color: #e3f2fd;
-  color: #1976d2;
+  background-color: rgba(200, 155, 60, 0.2);
+  color: #c89b3c;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
   font-weight: bold;
+  border: 1px solid #c89b3c;
 }
 
 .gamemode-section {
