@@ -8,6 +8,6 @@ export function login(userId) {
 }
 
 export function logout() {
-  localStorage.removeItem("userId");
+  localStorage.clear();
   isConnected.value = false;
 }

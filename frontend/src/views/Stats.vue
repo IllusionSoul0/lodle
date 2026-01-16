@@ -8,6 +8,7 @@ const loading = ref(true);
 const error = ref(null);
 const champions = ref([]);
 const selectedGamemode = ref(null);
+const userPseudo = ref("");
 
 // Get the image path locally based on champion name
 const imgSrc = (champion) => {
@@ -102,6 +103,12 @@ onMounted(async () => {
       champions.value = championsData.data || [];
     }
 
+    const userResponse = await fetch(`${API_URL}/user/${userId.value}`);
+    if (userResponse.ok) {
+      const userData = await userResponse.json();
+      userPseudo.value = userData.pseudo || "";
+    }
+
     const response = await fetch(`${API_URL}/stats/user/${userId.value}`);
 
     if (!response.ok) {
@@ -121,7 +128,7 @@ onMounted(async () => {
 
 <template>
   <div class="stats-container">
-    <h1>Statistiques de l'utilisateur</h1>
+    <h1>Statistiques de {{ userPseudo }}</h1>
 
     <div v-if="loading" class="loading">Chargement...</div>
 
@@ -197,7 +204,7 @@ onMounted(async () => {
 
 <style scoped>
 .stats-container {
-  max-width: 1000px;
+  width: 50vw;
   margin: 20px auto;
   padding: 20px;
   background-color: rgba(0, 0, 0, 0.75);

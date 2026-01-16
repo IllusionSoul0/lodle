@@ -59,4 +59,20 @@ final class AuthController extends AbstractController
 
         return new JsonResponse(['userId' => $user->getId(), 'message' => 'User created successfully'], 201);
     }
+
+    #[Route('/api/user/{userId}', name: 'api_user_get', methods: ['GET'])]
+    public function getUserData(int $userId, UsersRepository $usersRepository): JsonResponse
+    {
+        $user = $usersRepository->find($userId);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'User not found'], 404);
+        }
+
+        return new JsonResponse([
+            'id' => $user->getId(),
+            'pseudo' => $user->getPseudo(),
+            'email' => $user->getEmail(),
+        ]);
+    }
 }

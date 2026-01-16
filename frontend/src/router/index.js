@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Stats from '@/views/Stats.vue'
 import Quote from '@/views/Quote.vue'
 import Splash from '@/views/Splash.vue'
+import Spell from '@/views/Spell.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,6 +13,7 @@ const router = createRouter({
     { path: '/', component: Home },
     { path: '/classic', component: Classic },
     { path: '/quote', component: Quote },
+    { path: '/spell', component: Spell },
     { path: '/splash', component: Splash },
     { path: '/login', component: Login },
     { path: '/stats', component: Stats }

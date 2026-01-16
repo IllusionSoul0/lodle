@@ -3,7 +3,9 @@ import { onMounted, ref, watch } from "vue";
 import { isConnected, logout } from "./stores/auth";
 
 const disconnect = () => {
-  logout();
+  if (isConnected.value) {
+    logout();
+  }
 };
 
 onMounted(() => {
@@ -14,9 +16,11 @@ onMounted(() => {
 <template>
   <header>
     <nav>
-      <router-link to="/login" id="link"><img src="/src/assets/icones/logo-login.png" alt="login" width="50px" class="icone" />Connexion</router-link>
+      <router-link to="/login" id="link" @click="disconnect"
+        ><img src="/src/assets/icons/logo-login.png" alt="login" width="50px" class="icone" />{{ isConnected ? "Déconnexion" : "Connexion" }}
+      </router-link>
       <router-link to="/"><img src="/src/assets/logo/logo_loldle.png" alt="logo" width="500px" /></router-link>
-      <router-link to="/stats" id="link"><img src="/src/assets/icones/statistique.png" alt="stats" width="50px" class="icone" />Stats</router-link>
+      <router-link to="/stats" id="link"><img src="/src/assets/icons/statistique.png" alt="stats" width="50px" class="icone" />Stats</router-link>
     </nav>
   </header>
 
