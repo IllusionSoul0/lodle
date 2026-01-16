@@ -1,35 +1,60 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { API_URL } from "@/api";
 import { imgSrc } from "@/utils/imgSrc.js";
 import { useGameMode } from "@/components/useGameMode";
 
-const { loading, error, champions, champions_list, attempts, answer, quote, found, guess, suggestions, attempt, resetGame } = useGameMode("classic");
+const { loading, error, champions, champions_list, attempts, answer, found, guess, suggestions, attempt, resetGame, init } = useGameMode("quote");
 
+// Fetch champions and initialize game state
 onMounted(async () => {
-  try {
-    const res = await fetch(`${API_URL}/champions`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-    champions.value = json.data;
-    champions_list.value = data.map((champion) => champion.name);
-
-    // Select a random champion as the answer
-    answer.value = champions.value[Math.floor(Math.random() * champions.value.length)];
-    const reponse = await fetch(`${API_URL}/quotes/${answer.value.name}`);
-    if (!reponse.ok) {
-      throw new Error("Failed to fetch quote");
-    }
-    quote.value = await reponse.json().quote;
-    console.log(quote.value);
-  } catch (err) {
-    error.value = err.message;
-  } finally {
-    loading.value = false;
-  }
+  init();
 });
 </script>
 
 <template>
-  <h1>AAAAA</h1>
+  <div id="game">
+    <div v-if="loading">Loading...</div>
+    <div v-else-if="error">Error: {{ error.message }}</div>
+
+    <div v-else style="padding: 15px">
+      <h1>Mode Citation :</h1>
+      <p>Citation : {{ answer.quote }}</p>
+
+      <div v-if="!found">
+        <input v-model="guess" type="text" placeholder="Choisissez un champion..." @keydown.enter="attempt" />
+        <button @click="attempt">Test</button>
+
+        <ul v-if="suggestions.length" class="suggestions">
+          <li v-for="name in suggestions" :key="name" @click="guess = name">
+            <img :src="imgSrc(name)" alt="" />
+            <span>{{ name }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <div v-else>
+        <h2>Félicitations ! Vous avez trouvé le champion {{ answer.name }} en {{ attempts.length }} essais.</h2>
+      </div>
+
+      <ul>
+        <li v-for="champion in attempts.slice().reverse()" :key="champion.name" :style="{ backgroundColor: champion.name === answer.name ? 'green' : 'red' }" class="guess">
+          <img :src="imgSrc(champion.name)" alt="" width="60px" /> {{ champion.name }}
+        </li>
+      </ul>
+
+      <button @click="resetGame">Reset</button>
+    </div>
+  </div>
 </template>
+
+<style>
+  .guess {
+    list-style: none;
+    margin: 10px 0;
+    padding: 5px;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+</style>

@@ -12,12 +12,12 @@ final class QuotesController extends AbstractController
     #[Route('/api/quotes/{championName}', name: 'app_quotes')]
     public function index(string $championName, QuotesRepository $quotesRepository): JsonResponse
     {
-        $quotes = $quotesRepository->findBy(['name' => $championName]);
+        $quotes = $quotesRepository->findBy(['name_champion' => $championName]);
 
         $data = array_map(function ($quote) {
             return [
                 'id' => $quote->getId(),
-                'name' => $quote->getName(),
+                'name' => $quote->getNameChampion(),
                 'quote' => $quote->getQuote(),
             ];
         }, $quotes);

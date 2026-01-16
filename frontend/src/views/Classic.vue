@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { API_URL } from "@/api";
 import { imgSrc } from "@/utils/imgSrc.js";
 import { useGameMode } from "@/components/useGameMode";
 

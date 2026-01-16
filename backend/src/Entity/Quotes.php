@@ -14,7 +14,7 @@ class Quotes
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $name = null;
+    private ?string $name_champion = null;
 
     #[ORM\Column(length: 255)]
     private ?string $quote = null;
@@ -24,14 +24,14 @@ class Quotes
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getNameChampion(): ?string
     {
-        return $this->name;
+        return $this->name_champion;
     }
 
-    public function setName(string $name): static
+    public function setNameChampion(string $name): static
     {
-        $this->name = $name;
+        $this->name_champion = $name_champion;
 
         return $this;
     }
